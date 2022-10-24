@@ -1,0 +1,100 @@
+---
+title: "Suicidal Behaviors Among Adolescents"
+author: "Nina Austria, Raian Rith"
+date: "11/01/2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Installing Libraries:
+
+Installing all necessary libraries.
+
+```{r}
+library(tidyverse)
+library(readr)
+library(ggplot2)
+library(ggpubr)
+library(dplyr)
+library(naniar)
+library(forcats)
+library(wordcloud)
+library(tm)
+library(SnowballC)
+library(RColorBrewer)
+library(tidytext)
+```
+
+## Used head function to look at top 6 rows of data and read the data in.
+
+We read the data in and then look at the first few rows of code. 
+
+```{r}
+sb <- read_csv("GHSH.csv")
+```
+
+# Summarize the Data
+
+We use the glimpse and summary functions to look at the summary of the data. 
+
+```{r}
+glimpse(sb)
+```
+
+```{r}
+summary(sb)
+```
+
+# Data Cleaning
+
+Check for and drop any missing values:
+
+```{r}
+sum(is.na(sb)) # 6 missing values
+sb <- drop_na(sb)
+```
+
+Rename 'Age Group' variable so that there is no whitespace:
+
+```{r}
+sb <- rename(sb, Age_Group = 'Age Group')
+```
+
+Average number of attempted suicides by country (there are 26 countries in the dataset):
+
+```{r}
+sb %>% group_by(Country) %>% summarize(mean_attempted_suicides = mean(Attempted_suicide)) %>% arrange(desc(mean_attempted_suicides))
+```
+
+Average number of attempted suicides by year (years range from 2010-2017):
+
+```{r}
+sb %>% group_by(Year) %>% summarize(mean_attempted_suicides = mean(Attempted_suicide)) %>% arrange(desc(mean_attempted_suicides))
+```
+
+Average number of attempted suicides by age group (13-15 VS 16-17):
+
+```{r}
+sb %>% group_by(Age_Group) %>% summarize(mean_attempted_suicides = mean(Attempted_suicide)) %>% arrange(desc(mean_attempted_suicides))
+```
+
+Average number of attempted suicides by sex:
+
+```{r}
+sb %>% group_by(Sex) %>% summarize(mean_attempted_suicides = mean(Attempted_suicide)) %>% arrange(desc(mean_attempted_suicides))
+```
+
+# Data Visualization
+
+Scatterplot of attempted suicide VS number of close friends: (not sure if this makes sense.. what exactly is attempted suicide var?)
+
+```{r}
+ggplot(sb, mapping = aes(x=No_close_friends, y = Attempted_suicide)) +
+geom_point(color = "black") +
+labs(title="Number of close friends VS number of attempted suicides")
+```
